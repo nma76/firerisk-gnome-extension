@@ -1,0 +1,8 @@
+{
+  "name": "TestExtension",
+  "description": "Just a test extension",
+  "uuid": "testextension@jonas.jonika.nu",
+  "shell-version": [
+    "49"
+  ]
+}
