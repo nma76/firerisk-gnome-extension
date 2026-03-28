@@ -1,0 +1,6 @@
+dbus-run-session gnome-shell --devkit --wayland
+
+gnome-extensions create --interactive
+sudo apt install mutter-dev-bin
+
+gnome-extensions enable testextension@jonas.jonika.nu

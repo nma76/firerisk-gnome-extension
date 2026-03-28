@@ -1,7 +1,7 @@
 import { fetchJson } from "./net.js";
 
 export async function getLocation() {
-    console.log("Getting location");
+    log("Getting location");
     try {
         const json = await fetchJson('https://ipwho.is');
 

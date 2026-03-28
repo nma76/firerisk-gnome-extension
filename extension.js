@@ -26,6 +26,7 @@ import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 import * as Geo from './geo.js';
+import * as Risk from './risk.js';
 
 const Indicator = GObject.registerClass(
     class Indicator extends PanelMenu.Button {
@@ -70,7 +71,13 @@ const Indicator = GObject.registerClass(
                 // Enable click since we have a position
                 this._riskItem.setSensitive(true);
                 this._riskItem.connect('activate', () => {
-                    Main.notify(`Din ungefärliga position är ${loc.lat}, ${loc.lon} - ${loc.city}, ${loc.country}`);
+                    Risk.getRisk(loc.lat, loc.lon, 'sv').then(risk => {
+                        log('----------------------------------------------');
+                        log(risk);
+
+                        Main.notify(risk.riskMessage);
+                    });
+                    //Main.notify(`Din ungefärliga position är ${loc.lat}, ${loc.lon} - ${loc.city}, ${loc.country}`);
                 });
             });
         }
