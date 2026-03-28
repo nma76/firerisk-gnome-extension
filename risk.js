@@ -1,10 +1,13 @@
-import { fetchJson } from "./net.js";
+import { fetchJson, fetchJsonWithRetry } from "./net.js";
 
 export async function getRisk(lat, lon, lang) {
     log('Fetching risk from API');
     try {
         const url = `https://api.msb.se/brandrisk/v2/CurrentRisk/${lang}/${lat}/${lon}`;
-        const json = await fetchJson(url);
+        log("-------------------------------------------");
+        log(url);
+
+        const json = await fetchJsonWithRetry(url);
 
         if (!json || !json.forecast)
             throw new Error('Risk API returned an error');
@@ -15,6 +18,11 @@ export async function getRisk(lat, lon, lang) {
             risk: json.forecast.riskIndex,
             riskMessage: json.forecast.riskMessage,
         };
+
+        log("-------------------------------------------");
+        log(risk);
+
+
         return risk;
     } catch (e) {
         logError(e, 'Failed to fetch risk');
