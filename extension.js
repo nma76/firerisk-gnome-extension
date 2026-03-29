@@ -46,11 +46,8 @@ const Indicator = GObject.registerClass(
                 // Log position for debug
                 log(`Position: ${locJson.lat}, ${locJson.lon} (${locJson.city}, ${locJson.country})`);
 
+                // Fetch the risk data and set icon color
                 Risk.getRisk(locJson.lat, locJson.lon, 'sv').then(riskJson => {
-                    // log json for debug
-                    log('----------------------------------------------');
-                    log(riskJson);
-
                     // Set icon color based in risk
                     this._setIconcolor(riskJson.risk);
                 });

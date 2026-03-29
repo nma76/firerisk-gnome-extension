@@ -1,8 +1,8 @@
 {
-  "name": "TestExtension",
+  "name": "FireRisk",
   "icon": "resources/fire-symbolic.svg",
   "description": "Just a test extension",
-  "uuid": "testextension@jonas.jonika.nu",
+  "uuid": "firerisk@jonas.jonika.nu",
   "shell-version": [
     "49"
   ]
