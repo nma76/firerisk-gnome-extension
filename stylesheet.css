@@ -1,3 +1,4 @@
+/* Risk colors (icon) */
 .risk-unknown {
     color: #7a7a7a;
 }
@@ -18,4 +19,19 @@
 }
 .risk6 {
     color: #8e0000;
+}
+
+.risk-details-box {
+    padding: 6px 12px;
+    max-width: 300px;
+}
+.risk-level-label {
+    color: #222;
+    font-weight: bold;
+    padding-bottom: 4px;
+}
+.risk-message-label {
+    color: #333;
+    /* Gör att texten wrappar */
+    max-width: 280px;
 }

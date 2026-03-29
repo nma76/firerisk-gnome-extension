@@ -26,10 +26,52 @@ const Indicator = GObject.registerClass(
             // Add tray icon
             this.add_child(this._icon);
 
-            // Create menu item and disable click for now
+            // Create menu item that shows location and disable click for now
             this._riskItem = new PopupMenu.PopupMenuItem(_('Hämtar position...'));
             this._riskItem.setSensitive(false);
             this.menu.addMenuItem(this._riskItem);
+
+            // Create container in menu for other information
+            this._riskDetailsItem = new PopupMenu.PopupBaseMenuItem({
+                reactive: false,
+                can_focus: false,
+            });
+
+            let box = new St.BoxLayout({
+                vertical: true,
+                x_expand: true,
+                style_class: 'risk-details-box',
+            });
+
+            // Rubrik
+            this._riskLevelLabel = new St.Label({
+                text: "",
+                style_class: 'risk-level-label',
+                x_expand: true,
+            });
+
+            // Lång text
+            this._riskMessageLabel = new St.Label({
+                text: "",
+                style_class: 'risk-message-label',
+                x_expand: true,
+                y_expand: true,
+                reactive: false
+            });
+
+            // Make text wrap instead of being truncated
+            this._riskMessageLabel.clutter_text.set_line_wrap(true);
+            this._riskMessageLabel.clutter_text.set_line_wrap_mode(2);
+
+            // Add labels to the box
+            box.add_child(this._riskLevelLabel);
+            box.add_child(this._riskMessageLabel);
+
+            // add box to menu item
+            this._riskDetailsItem.add_child(box);
+
+            //add the menu item to menu
+            this.menu.addMenuItem(this._riskDetailsItem);
 
             // Try to fetch position
             Geo.getLocation().then(locJson => {
@@ -46,30 +88,20 @@ const Indicator = GObject.registerClass(
                 // Log position for debug
                 log(`Position: ${locJson.lat}, ${locJson.lon} (${locJson.city}, ${locJson.country})`);
 
+                // Set label with city
+                this._riskItem.label.text = `Visar brandrisk för ${locJson.city}`;
+
                 // Fetch the risk data and set icon color
                 Risk.getRisk(locJson.lat, locJson.lon, 'sv').then(riskJson => {
                     // Set icon color based in risk
                     this._setIconcolor(riskJson.risk);
+
+                    // Set label for risk level
+                    this._riskLevelLabel.text = `Brandrisknivå: ${riskJson.risk}`;
+
+                    //set label for message
+                    this._riskMessageLabel.text = riskJson.riskMessage;
                 });
-
-                // Set label with city
-                this._riskItem.label.text = `Visar brandrisk för ${locJson.city}`;
-
-                // Enable click since we have a position
-                //this._riskItem.setSensitive(true);
-                // this._riskItem.connect('activate', () => {
-                //     Risk.getRisk(loc.lat, loc.lon, 'sv').then(risk => {
-                //         // log json for debug
-                //         log('----------------------------------------------');
-                //         log(risk);
-
-                //         // Set icon color based in risk
-                //         this._setIconcolor(risk.riskIndex);
-
-                //         // Show risk message
-                //         Main.notify(risk.riskMessage);
-                //     });
-                // });
             });
         }
 
@@ -87,7 +119,7 @@ const Indicator = GObject.registerClass(
                 case 6: cssClass = "risk6"; break;
             }
 
-            if(this._currentClass)
+            if (this._currentClass)
                 this._icon.remove_style_class_name(this._currentClass);
 
             this._icon.add_style_class_name(cssClass);
