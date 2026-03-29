@@ -14,17 +14,14 @@ import * as Risk from './risk.js';
 const Indicator = GObject.registerClass(
     class Indicator extends PanelMenu.Button {
         _init(extension) {
-            super._init(0.0, _('My Shiny Indicator'));
+            super._init(0.0, 'Brandriskindikator');
 
-            // local variables
-            //this._location = null;
-
-            // Create tray icon and change color to white
+            // Create tray icon and set default color
             this._icon = new St.Icon({
                 gicon: Gio.icon_new_for_string(`${extension.path}/resources/fire-symbolic.svg`),
                 style_class: 'system-status-icon',
             })
-            this._icon.set_style("color: #fff !important;");
+            this._setIconcolor(0);
 
             // Add tray icon
             this.add_child(this._icon);
@@ -81,23 +78,23 @@ const Indicator = GObject.registerClass(
 
         _setIconcolor(riskIndex) {
             // default color, gray
-            let color = "#7a7a7a";
+            let cssClass = "risk-unknown";
 
             // Get color based on riskIndex
             switch (riskIndex) {
-                case 1: color = "#2ecc71"; break;
-                case 2: color = "#f1c40f"; break;
-                case 3: color = "#e67e22"; break;
-                case 4: color = "#e74c3c"; break;
-                case 5: color = "#c0392b"; break;
-                case 6: color = "#8e0000"; break;
+                case 1: cssClass = "risk1"; break;
+                case 2: cssClass = "risk2"; break;
+                case 3: cssClass = "risk3"; break;
+                case 4: cssClass = "risk4"; break;
+                case 5: cssClass = "risk5"; break;
+                case 6: cssClass = "risk6"; break;
             }
 
-            // build the style
-            let style = `color: ${color} !important;`;
+            if(this._currentClass)
+                this._icon.remove_style_class_name(this._currentClass);
 
-            // set style
-            this._icon.set_style(`color: ${color} !important;`);
+            this._icon.add_style_class_name(cssClass);
+            this._currentClass = cssClass;
         }
     });
 

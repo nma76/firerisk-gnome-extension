@@ -1,1 +1,21 @@
-/* Add your custom extension styling here */
+.risk-unknown {
+    color: #7a7a7a;
+}
+.risk1 {
+    color: #2ecc71;
+}
+.risk2 {
+    color: #f1c40f;
+}
+.risk3 {
+    color: #e67e22;
+}
+.risk4 {
+    color: #e74c3c;
+}
+.risk5 {
+    color: #c0392b;
+}
+.risk6 {
+    color: #8e0000;
+}
