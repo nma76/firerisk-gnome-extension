@@ -4,9 +4,6 @@ export async function getRisk(lat, lon, lang) {
     log('Fetching risk from API');
     try {
         const url = `https://api.msb.se/brandrisk/v2/CurrentRisk/${lang}/${lat}/${lon}`;
-        log("-------------------------------------------");
-        log(url);
-
         const json = await fetchJsonWithRetry(url);
 
         if (!json || !json.forecast)
@@ -18,10 +15,6 @@ export async function getRisk(lat, lon, lang) {
             risk: json.forecast.riskIndex,
             riskMessage: json.forecast.riskMessage,
         };
-
-        log("-------------------------------------------");
-        log(risk);
-
 
         return risk;
     } catch (e) {
