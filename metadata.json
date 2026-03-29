@@ -1,5 +1,6 @@
 {
   "name": "TestExtension",
+  "icon": "resources/fire-symbolic.svg",
   "description": "Just a test extension",
   "uuid": "testextension@jonas.jonika.nu",
   "shell-version": [
