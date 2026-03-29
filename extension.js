@@ -37,20 +37,21 @@ const Indicator = GObject.registerClass(
                 can_focus: false,
             });
 
+            // Create a box to hold the labels
             let box = new St.BoxLayout({
                 vertical: true,
                 x_expand: true,
                 style_class: 'risk-details-box',
             });
 
-            // Rubrik
+            // Heading - risk level
             this._riskLevelLabel = new St.Label({
                 text: "",
                 style_class: 'risk-level-label',
                 x_expand: true,
             });
 
-            // Lång text
+            // Risk message
             this._riskMessageLabel = new St.Label({
                 text: "",
                 style_class: 'risk-message-label',
