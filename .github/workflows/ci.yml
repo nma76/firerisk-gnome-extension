@@ -23,6 +23,10 @@ jobs:
                 EXT_UUID=$(jq -r '.uuid' metadata.json)
                 printf 'uuid=%s\n' "$EXT_UUID" >> "$GITHUB_OUTPUT"
 
+            - name: Debug UUID
+              run: | 
+                echo "UUID is: ${{ steps.vars.outputs.uuid }}"
+
             - name: Create ZIP
               run: | 
                 mkdir -p dist
