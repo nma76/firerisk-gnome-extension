@@ -1,6 +1,7 @@
 import GObject from 'gi://GObject';
 import Gio from 'gi://Gio';
 import St from 'gi://St';
+import GLib from 'gi://GLib';
 
 import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
@@ -16,6 +17,12 @@ const Indicator = GObject.registerClass(
         _init(extension) {
             super._init(0.0, 'Brandriskindikator');
 
+            // Construct timer at 5 minutes
+            this.refreshTimer = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 300, () => {
+                this._updateRisk();
+                return GLib.SOURCE_CONTINUE;
+            });
+
             // Create tray icon and set default color
             this._icon = new St.Icon({
                 gicon: Gio.icon_new_for_string(`${extension.path}/resources/fire-symbolic.svg`),
@@ -27,7 +34,7 @@ const Indicator = GObject.registerClass(
             this.add_child(this._icon);
 
             // Create menu item that shows location and disable click for now
-            this._riskItem = new PopupMenu.PopupMenuItem(_('Hämtar position...'));
+            this._riskItem = new PopupMenu.PopupMenuItem('Hämtar position...');
             this._riskItem.setSensitive(false);
             this.menu.addMenuItem(this._riskItem);
 
@@ -74,6 +81,11 @@ const Indicator = GObject.registerClass(
             //add the menu item to menu
             this.menu.addMenuItem(this._riskDetailsItem);
 
+            // Update the fire risk
+            this._updateRisk();
+        }
+
+        async _updateRisk() {
             // Try to fetch position
             Geo.getLocation().then(locJson => {
                 // If no position is found, set label
@@ -87,7 +99,7 @@ const Indicator = GObject.registerClass(
                 }
 
                 // Log position for debug
-                log(`Position: ${locJson.lat}, ${locJson.lon} (${locJson.city}, ${locJson.country})`);
+                //log(`Position: ${locJson.lat}, ${locJson.lon} (${locJson.city}, ${locJson.country})`);
 
                 // Set label with city
                 this._riskItem.label.text = `Visar brandrisk för ${locJson.city}`;
@@ -135,6 +147,12 @@ export default class IndicatorExampleExtension extends Extension {
     }
 
     disable() {
+        // Destroy timer
+        if (this._refreshTimer) {
+            GLib.source_remove(this._refreshTimer);
+            this._refreshTimer = null;
+        }
+
         this._indicator.destroy();
         this._indicator = null;
     }
