@@ -21,7 +21,7 @@ jobs:
               run: | 
                 # Read UUID from metadata.json
                 EXT_UUID=$(jq -r '.uuid' metadata.json)
-                echo "uuid=$EXT_UUID" >> $GITHUB_OUTPUT
+                echo "uuid=${EXT_UUID}" >> $GITHUB_OUTPUT
 
             - name: Create ZIP
               run: | 

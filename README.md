@@ -1,6 +1,17 @@
 # Fire risk Gnome extension
 
-This is an Gnome extension for Gnome 49 that shows fire risk for your location.  
+This is an Gnome extension for Gnome 49 that shows fire risk for your location in Sweden. This extension won't do
+anything for you if your location is set elsewhere.  
+
+At the moment there's no way to set the location. The extension uses ipwho to get your approx location.  
+
+The icon switches color from green -> yellow -> orange -> red depending on the risk level. The status is updated every 5 minutes.  
+
+![Brandriskindikator](screenshots/screenshot.png)
+
+## Installation
+Download the zip-file and run:
+gnome-extensions install firerisk@jonas.jonika.nu.zip
 
 ## Credits
 It uses the following API:s  
