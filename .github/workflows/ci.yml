@@ -1,0 +1,36 @@
+name: CI
+
+on:
+    push:
+        tags:
+            - 'v*'
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: write
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set extension directory name
+              id: vars
+              run: | 
+                # Read UUID from metadata.json
+                EXT_UUID=$(jq -r '.uuid' metadata.json)
+                echo "uuid=$EXT_UUID" >> $GITHUB_OUTPUT
+
+            - name: Create ZIP
+              run: | 
+                mkdir -p dist
+                zip -r "dist/${{ steps.vars.outputs.uuid }}.zip" . -x ".git/*" -x ".github/*" -x "dist/*"
+
+            - name: Create Github release
+              uses: softprops/action-gh-release@v2
+              with:
+                files: dist/*.zip
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
