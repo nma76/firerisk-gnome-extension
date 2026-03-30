@@ -27,10 +27,19 @@ jobs:
               run: | 
                 echo "UUID is: ${{ steps.vars.outputs.uuid }}"
 
+            - name: Prepare extension directory
+              run: |
+                mkdir -p build/${{ steps.vars.outputs.uuid }}
+                cp -r * build/${{ steps.vars.outputs.uuid }}/
+                rm -rf build/${{ steps.vars.outputs.uuid }}/commands.txt
+                rm -rf build/${{ steps.vars.outputs.uuid }}/dist
+                rm -rf build/${{ steps.vars.outputs.uuid }}/.git
+                rm -rf build/${{ steps.vars.outputs.uuid }}/.github
+
             - name: Create ZIP
               run: | 
                 mkdir -p dist
-                zip -r "dist/${{ steps.vars.outputs.uuid }}.zip" . -x ".git/*" -x ".github/*" -x "dist/*"
+                zip -r "dist/${{ steps.vars.outputs.uuid }}.zip" "build/${{ steps.vars.outputs.uuid }}"
 
             - name: Create Github release
               uses: softprops/action-gh-release@v2
