@@ -37,7 +37,8 @@ jobs:
             - name: Create ZIP
               run: | 
                 mkdir -p dist
-                zip -r "dist/${{ steps.vars.outputs.uuid }}.zip" "build/${{ steps.vars.outputs.uuid }}"
+                cd build
+                zip -r "dist/${{ steps.vars.outputs.uuid }}.zip" "${{ steps.vars.outputs.uuid }}"
 
             - name: Create Github release
               uses: softprops/action-gh-release@v2
