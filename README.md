@@ -1,6 +1,6 @@
 # Fire risk Gnome extension
 
-This is an Gnome extension for Gnome 49 that shows fire risk for your location in Sweden. This extension won't do
+This is an Gnome extension for Gnome 49 that shows fire risk and fire ban for your location in Sweden. This extension won't do
 anything for you if your location is set elsewhere.  
 
 At the moment there's no way to set the location. The extension uses ipwho to get your approx location.  

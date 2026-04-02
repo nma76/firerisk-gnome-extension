@@ -11,6 +11,7 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 import * as Geo from './geo.js';
 import * as Risk from './risk.js';
+import * as Ban from './fireprohibition.js';
 
 const Indicator = GObject.registerClass(
     class Indicator extends PanelMenu.Button {
@@ -53,7 +54,7 @@ const Indicator = GObject.registerClass(
 
             // Heading - risk level
             this._riskLevelLabel = new St.Label({
-                text: "",
+                text: "Hämtar brandrisk...",
                 style_class: 'risk-level-label',
                 x_expand: true,
             });
@@ -67,13 +68,33 @@ const Indicator = GObject.registerClass(
                 reactive: false
             });
 
-            // Make text wrap instead of being truncated
+            // Heading - fire ban
+            this._banStatusLabel = new St.Label({
+                text: "Hämtar eldningsförbud...",
+                style_class: 'risk-level-label',
+                x_expand: true,
+            });
+
+            // Fire ban message
+            this._banMessageLabel = new St.Label({
+                text: "",
+                style_class: 'risk-message-label',
+                x_expand: true,
+                y_expand: true,
+                reactive: false
+            })
+
+            // Make text wrap instead of being truncated for message labels
             this._riskMessageLabel.clutter_text.set_line_wrap(true);
             this._riskMessageLabel.clutter_text.set_line_wrap_mode(2);
+            this._banMessageLabel.clutter_text.set_line_wrap(true);
+            this._banMessageLabel.clutter_text.set_line_wrap_mode(2);
 
             // Add labels to the box
             box.add_child(this._riskLevelLabel);
             box.add_child(this._riskMessageLabel);
+            box.add_child(this._banStatusLabel);
+            box.add_child(this._banMessageLabel);
 
             // add box to menu item
             this._riskDetailsItem.add_child(box);
@@ -114,6 +135,15 @@ const Indicator = GObject.registerClass(
 
                     //set label for message
                     this._riskMessageLabel.text = riskJson.riskMessage;
+                });
+
+                // Fetch the fire ban data
+                Ban.getFireBan(locJson.lat, locJson.lon, 'sv').then(banJson => {
+                    // Set label for risk level
+                    this._banStatusLabel.text = `Eldningsförbud: ${banJson.status}`;
+
+                    //set label for message
+                    this._banMessageLabel.text = banJson.statusMessage;
                 });
             });
         }
