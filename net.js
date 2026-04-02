@@ -1,12 +1,10 @@
 import Soup from 'gi://Soup';
 
+const session = new Soup.Session();
+session.user_agent = 'gnome-shell-extension';
+
 export async function fetchJson(url) {
     return new Promise((resolve, reject) => {
-        const session = new Soup.Session();
-
-        // Viktigt i Soup 3
-        session.user_agent = 'gnome-shell-extension';
-
         const message = Soup.Message.new('GET', url);
 
         // Vissa endpoints kräver detta i Soup 3
@@ -22,7 +20,8 @@ export async function fetchJson(url) {
                     return;
                 }
 
-                resolve(JSON.parse(data));
+                // resolve(JSON.parse(data));
+                resolve(JSON.parse(new TextDecoder().decode(data)));
             } catch (e) {
                 reject(e);
             }
@@ -30,51 +29,15 @@ export async function fetchJson(url) {
     });
 }
 
-export async function fetchJsonWithRetry(url) {
-    return new Promise((resolve, reject) => {
-        const session = new Soup.Session();
-        session.user_agent = 'gnome-shell-extension';
+export async function fetchJsonWithRetry(url, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await fetchJson(url);
+        } catch (e) {
+            if (i === retries - 1)
+                throw e;
 
-        const message = Soup.Message.new('GET', url);
-        message.request_headers.append('Accept', 'application/json');
-
-        session.send_and_read_async(message, 0, null, (obj, res) => {
-            try {
-                const bytes = session.send_and_read_finish(res);
-
-                // Kontrollera HTTP-status
-                if (message.status_code !== 200) {
-                    reject(new Error(`HTTP ${message.status_code}`));
-                    return;
-                }
-
-                const data = bytes.get_data();
-
-                // Om tomt svar → retry en gång
-                if (!data || data.length === 0) {
-                    log("Empty response, retrying...");
-                    session.send_and_read_async(message, 0, null, (obj2, res2) => {
-                        try {
-                            const bytes2 = session.send_and_read_finish(res2);
-                            const data2 = bytes2.get_data();
-
-                            if (!data2 || data2.length === 0) {
-                                reject(new Error('Empty response body'));
-                                return;
-                            }
-
-                            resolve(JSON.parse(data2));
-                        } catch (e2) {
-                            reject(e2);
-                        }
-                    });
-                    return;
-                }
-
-                resolve(JSON.parse(data));
-            } catch (e) {
-                reject(e);
-            }
-        });
-    });
+            await new Promise(r => setTimeout(r, 200));
+        }
+    }
 }

@@ -108,44 +108,67 @@ const Indicator = GObject.registerClass(
 
         async _updateRisk() {
             // Try to fetch position
-            Geo.getLocation().then(locJson => {
-                // If no position is found, set label
-                if (!locJson) {
-                    // Log unknown position
-                    log("Position: unknown!");
+            const locJson = await Geo.getLocation();
 
-                    // Set label text
-                    this._riskItem.label.text = _('Okänd position');
-                    return;
+            // Create timestamp
+            const now = new Date();
+            const time = now.toLocaleTimeString('sv-SE', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            // If no position is found, set label
+            if (!locJson) {
+                log("Position: unknown!");
+                this._riskItem.label.text = 'Okänd position';
+                return;
+            }
+
+            // Set label with city
+            this._riskItem.label.text = `Visar brandrisk för ${locJson.city} - ${time}`;
+
+            try {
+                const [riskJson, banJson] = await Promise.all([
+                    Risk.getRisk(locJson.lat, locJson.lon, 'sv'),
+                    Ban.getFireBan(locJson.lat, locJson.lon, 'sv')
+                ]);
+
+                //
+                // --- Risk ---
+                //
+                if (riskJson) {
+                    this._setIconcolor(riskJson.risk);
+                    this._riskLevelLabel.text = `Brandrisknivå: ${riskJson.risk}`;
+                    this._riskMessageLabel.text = riskJson.riskMessage;
+                } else {
+                    this._setIconcolor(null);
+                    this._riskLevelLabel.text = "Kunde inte hämta data";
+                    this._riskMessageLabel.text = "";
                 }
 
-                // Log position for debug
-                //log(`Position: ${locJson.lat}, ${locJson.lon} (${locJson.city}, ${locJson.country})`);
-
-                // Set label with city
-                this._riskItem.label.text = `Visar brandrisk för ${locJson.city}`;
-
-                // Fetch the risk data and set icon color
-                Risk.getRisk(locJson.lat, locJson.lon, 'sv').then(riskJson => {
-                    // Set icon color based in risk
-                    this._setIconcolor(riskJson.risk);
-
-                    // Set label for risk level
-                    this._riskLevelLabel.text = `Brandrisknivå: ${riskJson.risk}`;
-
-                    //set label for message
-                    this._riskMessageLabel.text = riskJson.riskMessage;
-                });
-
-                // Fetch the fire ban data
-                Ban.getFireBan(locJson.lat, locJson.lon, 'sv').then(banJson => {
-                    // Set label for risk level
+                //
+                // --- Eldningsförbud ---
+                //
+                if (banJson) {
                     this._banStatusLabel.text = `Eldningsförbud: ${banJson.status}`;
-
-                    //set label for message
                     this._banMessageLabel.text = banJson.statusMessage;
-                });
-            });
+                } else {
+                    this._banStatusLabel.text = "Kunde inte hämta data";
+                    this._banMessageLabel.text = "";
+                }
+
+            } catch (e) {
+                logError(e);
+
+                // Fallback för båda
+                this._setIconcolor(null);
+
+                this._riskLevelLabel.text = "Kunde inte hämta data";
+                this._riskMessageLabel.text = "";
+
+                this._banStatusLabel.text = "Kunde inte hämta data";
+                this._banMessageLabel.text = "";
+            }
         }
 
         _setIconcolor(riskIndex) {
