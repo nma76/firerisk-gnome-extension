@@ -93,6 +93,7 @@ const Indicator = GObject.registerClass(
             // Add labels to the box
             box.add_child(this._riskLevelLabel);
             box.add_child(this._riskMessageLabel);
+            box.add_child(new PopupMenu.PopupSeparatorMenuItem());
             box.add_child(this._banStatusLabel);
             box.add_child(this._banMessageLabel);
 
