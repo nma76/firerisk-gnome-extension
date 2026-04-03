@@ -2,35 +2,43 @@
 .risk-unknown {
     color: #7a7a7a;
 }
+
 .risk1 {
-    color: #2ecc71;
+    color: #4A90E2;
 }
+
 .risk2 {
-    color: #f1c40f;
+    color: #2E7D32;
 }
+
 .risk3 {
-    color: #e67e22;
+    color: #F9D423;
 }
+
 .risk4 {
-    color: #e74c3c;
+    color: #F39C12;
 }
+
 .risk5 {
-    color: #c0392b;
+    color: #E74C3C;
 }
+
 .risk6 {
-    color: #8e0000;
+    color: #8B0000;
 }
 
 .risk-details-box {
     padding: 6px 12px;
     max-width: 300px;
 }
+
 .risk-level-label {
     color: #222;
     font-weight: bold;
     padding-bottom: 4px;
     padding-top: 2px;
 }
+
 .risk-message-label {
     color: #333;
     /* Gör att texten wrappar */
