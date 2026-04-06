@@ -1,3 +1,5 @@
+[![CI](https://github.com/nma76/firerisk-gnome-extension/actions/workflows/ci.yml/badge.svg)](https://github.com/nma76/firerisk-gnome-extension/actions/workflows/ci.yml)
+
 # Fire risk Gnome extension
 
 This is an Gnome extension for Gnome 49 that shows fire risk and fire ban for your location in Sweden. This extension won't do
